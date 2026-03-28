@@ -13,7 +13,9 @@ export async function deleteComment(commentId: string) {
   const user = await currentUser();
   const userEmail = user?.emailAddresses[0]?.emailAddress;
   
-  if (userEmail !== process.env.ADMIN_EMAIL) {
+  const allowedAdmins = process.env.ADMIN_EMAILS?.toLowerCase().split(',') || [];
+  
+  if (!user || !userEmail || !allowedAdmins.includes(userEmail.toLowerCase())) {
     throw new Error("Unauthorized");
   }
 

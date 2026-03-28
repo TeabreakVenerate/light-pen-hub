@@ -8,10 +8,11 @@ export default async function AdminDashboard() {
   const user = await currentUser();
   const userEmail = user?.emailAddresses[0]?.emailAddress;
 
-  console.log("CLERK EMAIL:", userEmail, "|| ENV EMAIL:", process.env.ADMIN_EMAIL);
+  const allowedAdmins = process.env.ADMIN_EMAILS?.toLowerCase().split(',') || [];
+  console.log("CLERK EMAIL:", userEmail, "|| ALLOWED ADMINS:", allowedAdmins);
 
   // 1. Absolute Security Check
-  if (!user || userEmail !== process.env.ADMIN_EMAIL) {
+  if (!user || !userEmail || !allowedAdmins.includes(userEmail.toLowerCase())) {
     redirect("/");
   }
 
