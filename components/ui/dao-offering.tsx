@@ -23,6 +23,7 @@ function OfferingItem({ offering, user }: { offering: any, user: any }) {
     reference: (new Date()).getTime().toString() + "_" + offering.id,
     email: user?.emailAddresses[0]?.emailAddress || "",
     amount: offering.price * 100, // Converts to kobo/cents
+    currency: "USD",
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
     metadata: {
       custom_fields: [
