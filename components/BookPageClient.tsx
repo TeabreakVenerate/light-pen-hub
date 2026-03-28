@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation";
 import PersonaBackdrop from "@/components/PersonaBackdrop";
 import BookCover3D from "@/components/BookCover3D";
 import CommentsFeed from "@/components/CommentsFeed";
-import StripeGiftButton from "@/components/StripeGiftButton";
 import type { BookRow, CommentRow, PersonaKey } from "@/lib/types";
 
 export default function BookPageClient({
@@ -76,10 +75,6 @@ export default function BookPageClient({
                   >
                     Read on Webnovel
                   </a>
-
-                  <div className="mt-3">
-                    <StripeGiftButton bookId={book.id} persona={book.persona ?? null} />
-                  </div>
                 </div>
 
                 <div className="text-xs text-paper/70">

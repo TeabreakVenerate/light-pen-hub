@@ -161,7 +161,7 @@ function PersonaCard({
               : "Sudden creative madness: ink learns to dance."}
         </div>
         <div className="mt-3 text-sm text-paper/75">
-          Realtime comments + Stripe gifts, tuned to this persona.
+          Realtime comments + Dao Offerings, tuned to this persona.
         </div>
         <div
           className={[

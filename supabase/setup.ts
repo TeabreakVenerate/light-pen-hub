@@ -52,8 +52,6 @@ create table if not exists public.gifts (
   from_clerk_user_id text not null,
   amount_cents bigint not null check (amount_cents > 0),
   currency text not null default 'usd',
-  stripe_checkout_session_id text unique,
-  stripe_payment_intent_id text,
   status text not null default 'pending'
     check (status in ('pending','paid','failed','refunded')),
   created_at timestamptz not null default now(),
