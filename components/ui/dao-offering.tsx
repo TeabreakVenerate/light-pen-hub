@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { usePaystackPayment } from "react-paystack";
 
 const DAO_OFFERINGS = [
   { id: "ink_drop", name: "Ink Drop 💧", price: 1, desc: "Just show your support", color: "text-blue-400", bg: "bg-blue-400/10", border: "hover:border-blue-400/50" },
@@ -16,8 +18,53 @@ const DAO_OFFERINGS = [
   { id: "authors_chosen", name: "Author's Chosen 👁️🗨️✍️", price: 250, desc: "Live conversation with the author, request a full side story or alternate POV chapter.", color: "text-purple-400", bg: "bg-purple-400/10", border: "hover:border-purple-400/50" }
 ];
 
+function OfferingItem({ offering, user }: { offering: any, user: any }) {
+  const config = {
+    reference: (new Date()).getTime().toString() + "_" + offering.id,
+    email: user?.emailAddresses[0]?.emailAddress || "",
+    amount: offering.price * 100, // Converts to kobo/cents
+    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
+    metadata: {
+      custom_fields: [
+        {
+          display_name: "Offering ID",
+          variable_name: "offering_id",
+          value: offering.id
+        }
+      ]
+    }
+  };
+
+  const initializePayment = usePaystackPayment(config as any);
+
+  return (
+    <div 
+      onClick={() => {
+        if (!user) {
+          alert("Please login to the sect first to make an offering!");
+          return;
+        }
+        initializePayment({
+          onSuccess: (reference) => console.log("Payment Successful!", reference),
+          onClose: () => console.log("Payment Modal Closed")
+        });
+      }}
+      className={`${offering.bg} border border-white/10 ${offering.border} p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all mb-4 cursor-pointer hover:-translate-y-1 shadow-lg`}
+    >
+      <div className="flex-1">
+        <h3 className={`text-lg font-bold ${offering.color}`}>{offering.name}</h3>
+        <p className="text-sm text-white/70 leading-relaxed">{offering.desc}</p>
+      </div>
+      <div className="bg-black/40 px-4 py-2 rounded-xl border border-white/5 shadow-lg shrink-0">
+        <span className={`text-xl font-extrabold ${offering.color}`}>${offering.price}</span>
+      </div>
+    </div>
+  );
+}
+
 export function DaoOfferingButton() {
   const [isOfferingModalOpen, setIsOfferingModalOpen] = useState(false);
+  const { user } = useUser();
 
   return (
     <>
@@ -44,19 +91,7 @@ export function DaoOfferingButton() {
             
             <div className="space-y-4">
               {DAO_OFFERINGS.map((offering) => (
-                <div 
-                  key={offering.id}
-                  onClick={() => console.log("Initialize Paystack for", offering.name)}
-                  className={`${offering.bg} border border-white/10 ${offering.border} p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all mb-4 cursor-pointer hover:-translate-y-1 shadow-lg`}
-                >
-                  <div className="flex-1">
-                    <h3 className={`text-lg font-bold ${offering.color}`}>{offering.name}</h3>
-                    <p className="text-sm text-white/70 leading-relaxed">{offering.desc}</p>
-                  </div>
-                  <div className="bg-black/40 px-4 py-2 rounded-xl border border-white/5 shadow-lg shrink-0">
-                    <span className={`text-xl font-extrabold ${offering.color}`}>${offering.price}</span>
-                  </div>
-                </div>
+                <OfferingItem key={offering.id} offering={offering} user={user} />
               ))}
             </div>
 
