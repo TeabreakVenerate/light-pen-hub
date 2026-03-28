@@ -18,12 +18,14 @@ const DAO_OFFERINGS = [
   { id: "authors_chosen", name: "Author's Chosen 👁️🗨️✍️", price: 250, desc: "Live conversation with the author, request a full side story or alternate POV chapter.", color: "text-purple-400", bg: "bg-purple-400/10", border: "hover:border-purple-400/50" }
 ];
 
+const EXCHANGE_RATE = 1500;
+
 function OfferingItem({ offering, user }: { offering: any, user: any }) {
   const config = {
     reference: (new Date()).getTime().toString() + "_" + offering.id,
     email: user?.emailAddresses[0]?.emailAddress || "",
-    amount: offering.price * 100, // Converts to kobo/cents
-    currency: "USD",
+    amount: offering.price * EXCHANGE_RATE * 100, // Converts USD to NGN kobo
+    currency: "NGN",
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
     metadata: {
       custom_fields: [
