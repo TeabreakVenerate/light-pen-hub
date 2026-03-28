@@ -55,7 +55,7 @@ export default function CommentsFeed({
     channel.subscribe();
 
     return () => {
-      supabaseBrowser.removeChannel(channel);
+      supabaseBrowser?.removeChannel(channel);
     };
   }, [bookId]);
 
